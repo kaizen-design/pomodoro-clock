@@ -2,8 +2,9 @@ $enable-gradients: true;
 $headings-font-weight: 700;
 $headings-margin-bottom: 1rem;
 $primary: #e60000;
+$orange: #ff9500;
+$warning: $orange;
 $dark: #1e1e1e;
-$custom-range-track-bg: #8f8e8e;
 
 @import '~bootstrap/scss/bootstrap.scss';
 
@@ -21,4 +22,37 @@ img {
 }
 .App {
 
+}
+
+.calculator {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-width: 400px;
+  overflow: hidden;
+  .calculator-screen {
+    height: 80px;
+    background-color: #1c1c1c;
+    color: #fff;
+    text-align: right;
+    padding: 0 10px;
+    margin: 20px 20px 0 20px;
+    font-size: 4rem;
+  }
+  button {
+    height: 60px;
+    font-size: 2rem;
+    padding: 0;
+    color: $white;
+    @extend .shadow-sm;
+  }
+  .equal-sign {
+    height: 100%;
+    grid-area: 2 / 4 / 6 / 5;
+  }
+  .calculator-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    padding: 20px;
+  }
 }
