@@ -11,7 +11,8 @@ class App extends React.Component {
       output: '0',
       firstOperand: '',
       operator: '',
-      previousKeyType: ''
+      previousKeyType: '',
+      isNegative: false
     };
     this.handleButtonClick = this.handleButtonClick.bind(this);
   }
@@ -25,26 +26,6 @@ class App extends React.Component {
     //  Remove the 'active' class from all keys
     Array.from(key.parentNode.children).forEach(k => k.classList.remove('active'));
 
-    //  Calculate function
-    const calculate = (n1, operator, n2) => {
-      let result = '';
-      switch (operator) {
-        case 'add':
-          result = parseFloat(n1) + parseFloat(n2);
-          break;
-        case 'subtract':
-          result = parseFloat(n1) - parseFloat(n2);
-          break;
-        case 'multiply':
-          result = parseFloat(n1) * parseFloat(n2);
-          break;
-        case 'divide':
-          result = parseFloat(n1) / parseFloat(n2);
-          break;
-      }
-      return result;
-    };
-
     switch (true) {
       //  HANDLE OPERATOR KEYS
       case operators.includes(id):
@@ -52,8 +33,9 @@ class App extends React.Component {
           key.classList.add('active');
           const firstOperand = this.state.firstOperand;
           const operator = this.state.operator;
+          const isNegative = firstOperand && this.state.previousKeyType === 'operator' && operator && id === 'subtract';
           if (firstOperand && operator && this.state.previousKeyType !== 'operator') {
-            const calc = calculate(firstOperand, operator, this.state.output);
+            const calc = this.calculate(firstOperand, operator, this.state.output);
             this.setState({
               firstOperand: calc,
               output: calc,
@@ -64,8 +46,9 @@ class App extends React.Component {
             })
           }
           this.setState({
-            operator: id,
+            operator: isNegative ? operator : id,
             previousKeyType: 'operator',
+            isNegative: isNegative
           });
         }
         break;
@@ -90,14 +73,14 @@ class App extends React.Component {
           firstOperand: '',
           operator: '',
           previousKeyType: '',
-          hasNegative: false
+          isNegative: false
         });
         break;
       //  HANDLE EQUALS
       case id === 'equals':
         if (this.state.firstOperand !== '') {
           this.setState({
-            output: calculate(this.state.firstOperand, this.state.operator, this.state.output),
+            output: this.calculate(this.state.firstOperand, this.state.operator, this.state.output),
             previousKeyType: 'equals',
             firstOperand: ''
           });
@@ -105,20 +88,28 @@ class App extends React.Component {
         break;
       //  HANDLE NUMBERS
       default:
-        if (this.state.output === '0' || this.state.previousKeyType === 'operator') {
-          this.setState({
-            output: value,
-            previousKeyType: 'number'
-          });
-        } else {
-          this.setState({
-            output: this.state.output + value,
-            previousKeyType: 'number'
-          });
-        }
+        this.setState({
+          output: this.state.output === '0' || this.state.previousKeyType === 'operator' ? (this.state.isNegative ? -value : value) : this.state.output + value,
+          previousKeyType: 'number'
+        });
         break;
     }
   }
+
+  calculate(n1, operator, n2) {
+    const firstOperand = parseFloat(n1);
+    const secondOperand = parseFloat(n2);
+    switch (operator) {
+      case 'add':
+        return firstOperand + secondOperand;
+      case 'subtract':
+        return firstOperand - secondOperand;
+      case 'multiply':
+        return firstOperand * secondOperand;
+      case 'divide':
+        return firstOperand / secondOperand;
+    }
+  };
 
   render() {
     return (
