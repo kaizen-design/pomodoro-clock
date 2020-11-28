@@ -8,7 +8,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      output: '',
+      output: '0',
       firstOperand: '',
       operator: '',
       secondOperand: '',
@@ -51,25 +51,37 @@ class App extends React.Component {
       case operators.includes(id):
         if (this.state.output !== '') {
           key.classList.add('active');
+          /*if (this.state.firstOperand !== '' && this.state.previousKeyType !== 'operator') {
+            this.setState({
+              output: calculate(this.state.firstOperand, this.state.operator, this.state.output),
+              //secondOperand: this.state.output
+            });
+          }*/
           this.setState({
             firstOperand: this.state.output,
             operator: id,
-            previousKeyType: 'operator'
+            previousKeyType: 'operator',
           });
         }
         break;
       //  HANDLE DECIMALS
       case id === 'decimal':
-        if (this.state.output !== '' && !this.state.output.includes('.')) {
+        if (this.state.previousKeyType === 'operator') {
           this.setState({
-            output: this.state.output + value
+            output: '0' + value,
+            previousKeyType: 'decimal'
+          });
+        } else if (this.state.output !== '' && !this.state.output.includes('.')) {
+          this.setState({
+            output: this.state.output + value,
+            previousKeyType: 'decimal'
           });
         }
         break;
       //  HANDLE CLEAR
       case id === 'clear':
         this.setState({
-          output: '',
+          output: '0',
           firstOperand: '',
           operator: '',
           secondOperand: '',
@@ -79,19 +91,22 @@ class App extends React.Component {
       //  HANDLE EQUALS
       case id === 'equals':
         this.setState({
-          output: calculate(this.state.firstOperand, this.state.operator, this.state.output)
+          output: calculate(this.state.firstOperand, this.state.operator, this.state.output),
+          previousKeyType: 'equals',
+          secondOperand: this.state.output
         });
         break;
       //  HANDLE NUMBERS
       default:
-        if (this.state.previousKeyType === 'operator') {
+        if (this.state.output === '0' || this.state.previousKeyType === 'operator') {
           this.setState({
             output: value,
-            previousKeyType: ''
+            previousKeyType: 'number'
           });
         } else {
           this.setState({
-            output: this.state.output + value
+            output: this.state.output + value,
+            previousKeyType: 'number'
           });
         }
         break;
