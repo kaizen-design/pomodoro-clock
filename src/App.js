@@ -89,16 +89,19 @@ class App extends React.Component {
           output: '0',
           firstOperand: '',
           operator: '',
-          previousKeyType: ''
+          previousKeyType: '',
+          hasNegative: false
         });
         break;
       //  HANDLE EQUALS
       case id === 'equals':
-        this.setState({
-          output: calculate(this.state.firstOperand, this.state.operator, this.state.output),
-          previousKeyType: 'equals',
-          operator: '',
-        });
+        if (this.state.firstOperand !== '') {
+          this.setState({
+            output: calculate(this.state.firstOperand, this.state.operator, this.state.output),
+            previousKeyType: 'equals',
+            firstOperand: ''
+          });
+        }
         break;
       //  HANDLE NUMBERS
       default:
