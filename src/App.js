@@ -11,7 +11,6 @@ class App extends React.Component {
       output: '0',
       firstOperand: '',
       operator: '',
-      secondOperand: '',
       previousKeyType: ''
     };
     this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -90,7 +89,6 @@ class App extends React.Component {
           output: '0',
           firstOperand: '',
           operator: '',
-          secondOperand: '',
           previousKeyType: ''
         });
         break;
@@ -99,7 +97,7 @@ class App extends React.Component {
         this.setState({
           output: calculate(this.state.firstOperand, this.state.operator, this.state.output),
           previousKeyType: 'equals',
-          secondOperand: this.state.output
+          operator: '',
         });
         break;
       //  HANDLE NUMBERS
