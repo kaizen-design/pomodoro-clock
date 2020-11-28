@@ -1,5 +1,5 @@
 {
-  "name": "javascript-calculator",
+  "name": "pomodoro-clock",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -33,5 +33,5 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://kaizen-design.github.io/javascript-calculator/"
+  "homepage": "https://kaizen-design.github.io/pomodoro-clock/"
 }

@@ -1,6 +1,6 @@
-# Javascript Calculator
+# Pomodoro Clock
 
-**Demo**: [https://kaizen-design.github.io/javascript-calculator/](https://kaizen-design.github.io/javascript-calculator/)
+**Demo**: [https://kaizen-design.github.io/pomodoro-clock/](https://kaizen-design.github.io/pomodoro-clock/)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
