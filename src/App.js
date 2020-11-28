@@ -51,14 +51,20 @@ class App extends React.Component {
       case operators.includes(id):
         if (this.state.output !== '') {
           key.classList.add('active');
-          /*if (this.state.firstOperand !== '' && this.state.previousKeyType !== 'operator') {
+          const firstOperand = this.state.firstOperand;
+          const operator = this.state.operator;
+          if (firstOperand && operator && this.state.previousKeyType !== 'operator') {
+            const calc = calculate(firstOperand, operator, this.state.output);
             this.setState({
-              output: calculate(this.state.firstOperand, this.state.operator, this.state.output),
-              //secondOperand: this.state.output
+              firstOperand: calc,
+              output: calc,
             });
-          }*/
+          } else {
+            this.setState({
+              firstOperand: this.state.output
+            })
+          }
           this.setState({
-            firstOperand: this.state.output,
             operator: id,
             previousKeyType: 'operator',
           });
