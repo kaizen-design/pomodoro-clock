@@ -10,7 +10,8 @@ class App extends React.Component {
     this.state = {
       breakLength: 5,
       sessionLength: 25,
-      timer: '25:00',
+      timer: 1500,
+      timerInterval: null,
       cycle: 'Session',
       active: false,
     };
@@ -39,14 +40,16 @@ class App extends React.Component {
         case 'session-decrement':
           if (this.state.sessionLength > 1) {
             this.setState({
-              sessionLength: this.state.sessionLength - 1
+              sessionLength: this.state.sessionLength - 1,
+              timer: (this.state.sessionLength - 1) * 60
             });
           }
           break;
         case 'session-increment':
           if (this.state.sessionLength < 60) {
             this.setState({
-              sessionLength: this.state.sessionLength + 1
+              sessionLength: this.state.sessionLength + 1,
+              timer: (this.state.sessionLength + 1) * 60
             });
           }
           break;
@@ -55,15 +58,55 @@ class App extends React.Component {
   };
 
   toggleClock = () => {
-    this.setState({
-      active: !this.state.active
-    });
+    if (!this.state.active) {
+      this.setState({
+        active: true,
+        timerInterval: setInterval(() => {
+          this.decreaseTimer();
+          this.cycleControl();
+        }, 1000)
+      });
+      this.countDown();
+    } else {
+      this.state.timerInterval && clearInterval(this.state.timerInterval);
+      this.setState({
+        active: false,
+        timerInterval: null
+      });
+    }
   };
 
-  setTimer = () => {
-    this.state.timer = this.state.cycle === 'Session' ? this.state.sessionLength : this.state.breakLength;
-    let minutes = Math.floor(this.state.timer);
-    let seconds = this.state.timer - minutes;
+  countDown = () => {
+    if (this.state.timer === 0) {
+      this.audioBeep.play();
+    } else if (this.state.timer === -1) {
+      if (this.state.cycle === 'Session') {
+        this.setState({
+          cycle: 'Break',
+          timer: this.state.breakLength * 60
+        });
+      } else {
+        this.setState({
+          cycle: 'Session',
+          timer: this.state.sessionLength * 60
+        });
+      }
+    }
+  };
+
+  decreaseTimer() {
+    this.setState({
+      timer: this.state.timer - 1
+    });
+  }
+
+  cycleControl = () => {
+
+  };
+
+  setTimer = (timer) => {
+    let minutes = Math.floor(timer / 60);
+    let seconds = timer - minutes * 60;
     seconds = seconds < 10 ? '0' + seconds : seconds;
     minutes = minutes < 10 ? '0' + minutes : minutes;
     return `${minutes}:${seconds}`;
@@ -79,12 +122,14 @@ class App extends React.Component {
     this.setState({
       breakLength: 5,
       sessionLength: 25,
-      timer: '25:00',
+      timer: 1500,
       cycle: 'Session',
-      active: false
+      active: false,
+      timerInterval: null
     });
     this.audioBeep.pause();
     this.audioBeep.currentTime = 0;
+    this.state.timerInterval && clearInterval(this.state.timerInterval);
   };
 
   render() {
@@ -93,6 +138,7 @@ class App extends React.Component {
         <Navbar brand={projectName} />
         <main role="main" className="App container my-auto py-3">
           <div className="pomodoro-clock card text-center">
+
             <div className="card-header">
               <div className="row">
                 <TimerControl
@@ -111,13 +157,15 @@ class App extends React.Component {
                 />
               </div>
             </div>
+
             <div className="card-body py-5">
               <h6 id="timer-label" className="mb-0">{this.state.cycle}</h6>
               <h2 id="time-left"
                   className="display-1 font-weight-bold mb-0">
-                {this.state.timer}
+                {this.setTimer(this.state.timer)}
               </h2>
             </div>
+
             <div className="card-footer text-muted">
               <div className="row">
                 <div className="col">
@@ -140,12 +188,14 @@ class App extends React.Component {
                 </div>
               </div>
             </div>
+
             <audio
               id="beep"
               preload="auto"
               ref={(audio) => {this.audioBeep = audio}}
               src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
             />
+
           </div>
         </main>
         <Footer />
