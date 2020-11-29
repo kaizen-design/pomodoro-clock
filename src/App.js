@@ -1,7 +1,6 @@
 import React from 'react';
 import Navbar from './templates/layout/Navbar';
 import Footer from './templates/layout/Footer';
-import Countdown from 'react-countdown';
 
 const projectName = 'Pomodoro Clock';
 
@@ -11,16 +10,10 @@ class App extends React.Component {
     this.state = {
       breakLength: 5,
       sessionLength: 25,
-      currentSession: 25,
       currentState: 'Session',
       active: false,
     };
-    this.setClockRef = this.setClockRef.bind(this);
     //this.handleSettingsChange = this.handleSettingsChange.bind(this);
-  }
-
-  setClockRef(ref) {
-    this.clockRef = ref;
   }
 
   handleSettingsChange = (e) => {
@@ -60,18 +53,9 @@ class App extends React.Component {
   };
 
   toggleClock = () => {
-    this.state.active ? this.clockRef.pause() : this.clockRef.start();
     this.setState({
       active: !this.state.active
     });
-  };
-
-  countdown = ({formatted, api, completed}) => {
-    if (completed) {
-      console.log('Coundown completed')
-    } else {
-      return <span>{formatted.minutes}:{formatted.seconds}</span>;
-    }
   };
 
   reset = () => {
@@ -93,12 +77,14 @@ class App extends React.Component {
               <div className="row">
                 <TimerControl
                   id='break'
+                  title='Break'
                   value={this.state.breakLength}
                   onChange={this.handleSettingsChange}
                   readOnly={!!this.state.active}
                 />
                 <TimerControl
                   id='session'
+                  title='Session'
                   value={this.state.sessionLength}
                   onChange={this.handleSettingsChange}
                   readOnly={!!this.state.active}
@@ -109,11 +95,7 @@ class App extends React.Component {
               <h6 id="timer-label" className="mb-0">{this.state.currentState}</h6>
               <h2 id="time-left"
                   className="display-1 font-weight-bold mb-0">
-                <Countdown
-                  date={Date.now() + this.state.currentSession * 1000 * 60 }
-                  autoStart={false}
-                  renderer={this.countdown}
-                  ref={this.setClockRef} />
+                {this.state.sessionLength + ':00'}
               </h2>
             </div>
             <div className="card-footer text-muted">
@@ -148,20 +130,35 @@ class TimerControl extends React.Component {
   render() {
     return (
       <div className="col">
-        <h6 id="break-label" className="d-block text-center mb-2">Break Length</h6>
+        <h6 id={this.props.id + '-label'} className="d-block text-center mb-2">
+          {this.props.title} Length
+        </h6>
         <div className="input-group">
           <div className="input-group-prepend">
-            <button id={this.props.id + '-decrement'} className="btn btn-outline-secondary" type="button" onClick={this.props.onChange}>-</button>
+            <button
+              id={this.props.id + '-decrement'}
+              className="btn btn-outline-secondary"
+              type="button"
+              onClick={this.props.onChange}>
+              -
+            </button>
           </div>
-          <input id={this.props.id + '-length'}
-                 type="text"
-                 className="form-control text-center"
-                 value={this.props.value}
-                 onChange={this.props.onChange}
-                 readOnly={!!this.props.readOnly}
+          <input
+            id={this.props.id + '-length'}
+            type="text"
+            className="form-control text-center"
+            value={this.props.value}
+            onChange={this.props.onChange}
+            readOnly={!!this.props.readOnly}
           />
           <div className="input-group-append">
-            <button id={this.props.id + '-increment'} className="btn btn-outline-secondary" type="button" onClick={this.props.onChange}>+</button>
+            <button
+              id={this.props.id + '-increment'}
+              className="btn btn-outline-secondary"
+              type="button"
+              onClick={this.props.onChange}>
+              +
+            </button>
           </div>
         </div>
       </div>
