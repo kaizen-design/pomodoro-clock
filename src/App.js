@@ -8,10 +8,10 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      breakLength: 300,
-      sessionLength: 1500,
+      breakLength: 5,
+      sessionLength: 25,
       timer: 1500,
-      timerType: 'Session',
+      cycle: 'Session',
       active: false,
     };
     //this.handleSettingsChange = this.handleSettingsChange.bind(this);
@@ -24,28 +24,28 @@ class App extends React.Component {
         case 'break-decrement':
           if (this.state.breakLength > 1) {
             this.setState({
-              breakLength: this.state.breakLength - 60
+              breakLength: this.state.breakLength - 1
             });
           }
           break;
         case 'break-increment':
-          if (this.state.breakLength < 3600) {
+          if (this.state.breakLength < 60) {
             this.setState({
-              breakLength: this.state.breakLength + 60
+              breakLength: this.state.breakLength + 1
             });
           }
           break;
         case 'session-decrement':
           if (this.state.sessionLength > 1) {
             this.setState({
-              sessionLength: this.state.sessionLength - 60
+              sessionLength: this.state.sessionLength - 1
             });
           }
           break;
         case 'session-increment':
-          if (this.state.sessionLength < 3600) {
+          if (this.state.sessionLength < 60) {
             this.setState({
-              sessionLength: this.state.sessionLength + 60
+              sessionLength: this.state.sessionLength + 1
             });
           }
           break;
@@ -60,12 +60,12 @@ class App extends React.Component {
   };
 
   setTimer = () => {
-    this.state.timer = this.state.timerType === 'Session' ? this.state.sessionLength : this.state.breakLength;
-    let minutes = Math.floor(this.state.timer / 60);
-    let seconds = this.state.timer - minutes * 60;
+    this.state.timer = this.state.cycle === 'Session' ? this.state.sessionLength : this.state.breakLength;
+    let minutes = Math.floor(this.state.timer);
+    let seconds = this.state.timer - minutes;
     seconds = seconds < 10 ? '0' + seconds : seconds;
     minutes = minutes < 10 ? '0' + minutes : minutes;
-    return minutes + ':' + seconds;
+    return minutes + ' : ' + seconds;
   };
 
   reset = () => {
@@ -73,7 +73,7 @@ class App extends React.Component {
       breakLength: 5,
       sessionLength: 25,
       timer: 1500,
-      timerType: 'Session',
+      cycle: 'Session',
       active: false
     });
   };
@@ -103,7 +103,7 @@ class App extends React.Component {
               </div>
             </div>
             <div className="card-body py-5">
-              <h6 id="timer-label" className="mb-0">{this.state.timerType}</h6>
+              <h6 id="timer-label" className="mb-0">{this.state.cycle}</h6>
               <h2 id="time-left"
                   className="display-1 font-weight-bold mb-0">
                 {this.setTimer()}
@@ -160,7 +160,7 @@ class TimerControl extends React.Component {
             id={this.props.id + '-length'}
             type="text"
             className="form-control text-center"
-            value={this.props.value / 60}
+            value={this.props.value}
             onChange={this.props.settingsChange}
             readOnly={!!this.props.isReadOnly}
           />
