@@ -8,9 +8,10 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      breakLength: 5,
-      sessionLength: 25,
-      currentState: 'Session',
+      breakLength: 300,
+      sessionLength: 1500,
+      timer: 1500,
+      timerType: 'Session',
       active: false,
     };
     //this.handleSettingsChange = this.handleSettingsChange.bind(this);
@@ -23,28 +24,28 @@ class App extends React.Component {
         case 'break-decrement':
           if (this.state.breakLength > 1) {
             this.setState({
-              breakLength: this.state.breakLength - 1
+              breakLength: this.state.breakLength - 60
             });
           }
           break;
         case 'break-increment':
-          if (this.state.breakLength < 60) {
+          if (this.state.breakLength < 3600) {
             this.setState({
-              breakLength: this.state.breakLength + 1
+              breakLength: this.state.breakLength + 60
             });
           }
           break;
         case 'session-decrement':
           if (this.state.sessionLength > 1) {
             this.setState({
-              sessionLength: this.state.sessionLength - 1
+              sessionLength: this.state.sessionLength - 60
             });
           }
           break;
         case 'session-increment':
-          if (this.state.sessionLength < 60) {
+          if (this.state.sessionLength < 3600) {
             this.setState({
-              sessionLength: this.state.sessionLength + 1
+              sessionLength: this.state.sessionLength + 60
             });
           }
           break;
@@ -58,11 +59,21 @@ class App extends React.Component {
     });
   };
 
+  setTimer = () => {
+    this.state.timer = this.state.timerType === 'Session' ? this.state.sessionLength : this.state.breakLength;
+    let minutes = Math.floor(this.state.timer / 60);
+    let seconds = this.state.timer - minutes * 60;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    return minutes + ':' + seconds;
+  };
+
   reset = () => {
     this.setState({
       breakLength: 5,
       sessionLength: 25,
-      currentState: 'Session',
+      timer: 1500,
+      timerType: 'Session',
       active: false
     });
   };
@@ -79,40 +90,42 @@ class App extends React.Component {
                   id='break'
                   title='Break'
                   value={this.state.breakLength}
-                  onChange={this.handleSettingsChange}
-                  readOnly={!!this.state.active}
+                  settingsChange={this.handleSettingsChange}
+                  isReadOnly={!!this.state.active}
                 />
                 <TimerControl
                   id='session'
                   title='Session'
                   value={this.state.sessionLength}
-                  onChange={this.handleSettingsChange}
-                  readOnly={!!this.state.active}
+                  settingsChange={this.handleSettingsChange}
+                  isReadOnly={!!this.state.active}
                 />
               </div>
             </div>
             <div className="card-body py-5">
-              <h6 id="timer-label" className="mb-0">{this.state.currentState}</h6>
+              <h6 id="timer-label" className="mb-0">{this.state.timerType}</h6>
               <h2 id="time-left"
                   className="display-1 font-weight-bold mb-0">
-                {this.state.sessionLength + ':00'}
+                {this.setTimer()}
               </h2>
             </div>
             <div className="card-footer text-muted">
               <div className="row">
                 <div className="col">
-                  <button id="start_stop"
-                          type="button"
-                          className={this.state.active ? 'btn btn-block btn-danger' : 'btn btn-block btn-primary'}
-                          onClick={this.toggleClock}>
+                  <button
+                    id="start_stop"
+                    type="button"
+                    className={this.state.active ? 'btn btn-block btn-danger' : 'btn btn-block btn-primary'}
+                    onClick={this.toggleClock}>
                     {this.state.active ? 'Pause' : 'Start'}
                   </button>
                 </div>
                 <div className="col">
-                  <button id="reset"
-                          type="button"
-                          className="btn btn-block btn-secondary"
-                          onClick={this.reset}>
+                  <button
+                    id="reset"
+                    type="button"
+                    className="btn btn-block btn-secondary"
+                    onClick={this.reset}>
                     Reset
                   </button>
                 </div>
@@ -139,7 +152,7 @@ class TimerControl extends React.Component {
               id={this.props.id + '-decrement'}
               className="btn btn-outline-secondary"
               type="button"
-              onClick={this.props.onChange}>
+              onClick={this.props.settingsChange}>
               -
             </button>
           </div>
@@ -147,16 +160,16 @@ class TimerControl extends React.Component {
             id={this.props.id + '-length'}
             type="text"
             className="form-control text-center"
-            value={this.props.value}
-            onChange={this.props.onChange}
-            readOnly={!!this.props.readOnly}
+            value={this.props.value / 60}
+            onChange={this.props.settingsChange}
+            readOnly={!!this.props.isReadOnly}
           />
           <div className="input-group-append">
             <button
               id={this.props.id + '-increment'}
               className="btn btn-outline-secondary"
               type="button"
-              onClick={this.props.onChange}>
+              onClick={this.props.settingsChange}>
               +
             </button>
           </div>
