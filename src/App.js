@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './templates/layout/Navbar';
 import Footer from './templates/layout/Footer';
+import Countdown from 'react-countdown';
 
 const projectName = 'Pomodoro Clock';
 
@@ -117,7 +118,13 @@ class App extends React.Component {
             </div>
             <div className="card-body py-5">
               <h6 id="timer-label" className="mb-0">Session</h6>
-              <h2 id="time-left" className="display-1 font-weight-bold mb-0">25:00</h2>
+              <h2 id="time-left"
+                  className="display-1 font-weight-bold mb-0">
+                <Countdown
+                  date={Date.now() + (this.state.currentState === 'Session' ? this.state.sessionLength : this.state.breakLength) * 1000 * 60 }
+                  autoStart={false}
+                  renderer={props => <div>{props.formatted.minutes}:{props.formatted.seconds}</div>} />
+              </h2>
             </div>
             <div className="card-footer text-muted">
               <div className="row">
