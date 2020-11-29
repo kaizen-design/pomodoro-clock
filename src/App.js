@@ -10,7 +10,7 @@ class App extends React.Component {
     this.state = {
       breakLength: 5,
       sessionLength: 25,
-      timer: 1500,
+      timer: '25:00',
       cycle: 'Session',
       active: false,
     };
@@ -65,14 +65,14 @@ class App extends React.Component {
     let seconds = this.state.timer - minutes;
     seconds = seconds < 10 ? '0' + seconds : seconds;
     minutes = minutes < 10 ? '0' + minutes : minutes;
-    return minutes + ' : ' + seconds;
+    return minutes + ':' + seconds;
   };
 
   reset = () => {
     this.setState({
       breakLength: 5,
       sessionLength: 25,
-      timer: 1500,
+      timer: '25:00',
       cycle: 'Session',
       active: false
     });
@@ -106,7 +106,7 @@ class App extends React.Component {
               <h6 id="timer-label" className="mb-0">{this.state.cycle}</h6>
               <h2 id="time-left"
                   className="display-1 font-weight-bold mb-0">
-                {this.setTimer()}
+                {this.state.timer}
               </h2>
             </div>
             <div className="card-footer text-muted">
@@ -131,6 +131,12 @@ class App extends React.Component {
                 </div>
               </div>
             </div>
+            <audio
+              id="beep"
+              preload="auto"
+              ref={(audio) => {this.soundAlert = audio}}
+              src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
+            />
           </div>
         </main>
         <Footer />
