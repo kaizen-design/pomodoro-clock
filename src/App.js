@@ -30,6 +30,7 @@ class App extends React.Component {
           break;
         case 'break-increment':
           if (this.state.breakLength < 60) {
+            this.soundAlert();
             this.setState({
               breakLength: this.state.breakLength + 1
             });
@@ -65,7 +66,13 @@ class App extends React.Component {
     let seconds = this.state.timer - minutes;
     seconds = seconds < 10 ? '0' + seconds : seconds;
     minutes = minutes < 10 ? '0' + minutes : minutes;
-    return minutes + ':' + seconds;
+    return `${minutes}:${seconds}`;
+  };
+
+  soundAlert = (timer) => {
+    if (timer === 0) {
+      this.audioBeep.play();
+    }
   };
 
   reset = () => {
@@ -76,6 +83,8 @@ class App extends React.Component {
       cycle: 'Session',
       active: false
     });
+    this.audioBeep.pause();
+    this.audioBeep.currentTime = 0;
   };
 
   render() {
@@ -134,7 +143,7 @@ class App extends React.Component {
             <audio
               id="beep"
               preload="auto"
-              ref={(audio) => {this.soundAlert = audio}}
+              ref={(audio) => {this.audioBeep = audio}}
               src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
             />
           </div>
