@@ -11,10 +11,16 @@ class App extends React.Component {
     this.state = {
       breakLength: 5,
       sessionLength: 25,
+      currentSession: 25,
       currentState: 'Session',
       active: false,
     };
+    this.setClockRef = this.setClockRef.bind(this);
     //this.handleSettingsChange = this.handleSettingsChange.bind(this);
+  }
+
+  setClockRef(ref) {
+    this.clockRef = ref;
   }
 
   handleSettingsChange = (e) => {
@@ -54,9 +60,18 @@ class App extends React.Component {
   };
 
   toggleClock = () => {
+    this.state.active ? this.clockRef.pause() : this.clockRef.start();
     this.setState({
       active: !this.state.active
     });
+  };
+
+  countdown = ({formatted, api, completed}) => {
+    if (completed) {
+      console.log('Coundown completed')
+    } else {
+      return <span>{formatted.minutes}:{formatted.seconds}</span>;
+    }
   };
 
   reset = () => {
@@ -76,54 +91,29 @@ class App extends React.Component {
           <div className="pomodoro-clock card text-center">
             <div className="card-header">
               <div className="row">
-                <div className="col">
-                  <h6 id="break-label" className="d-block text-center mb-2">Break Length</h6>
-                  <div className="input-group">
-                    <div className="input-group-prepend">
-                      <button id="break-decrement" className="btn btn-outline-secondary" type="button" onClick={this.handleSettingsChange}>-</button>
-                    </div>
-                    <input id="break-length"
-                           type="text"
-                           className="form-control text-center"
-                           value={this.state.breakLength}
-                           onChange={this.handleSettingsChange}
-                           readOnly={!!this.state.active}
-                           min="1"
-                           max="60" />
-                    <div className="input-group-append">
-                      <button id="break-increment" className="btn btn-outline-secondary" type="button" onClick={this.handleSettingsChange}>+</button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col">
-                  <h6 id="session-label" className="d-block text-center mb-2">Session Length</h6>
-                  <div className="input-group">
-                    <div className="input-group-prepend">
-                      <button id="session-decrement" className="btn btn-outline-secondary" type="button" onClick={this.handleSettingsChange}>-</button>
-                    </div>
-                    <input id="session-length"
-                           type="text"
-                           className="form-control text-center"
-                           value={this.state.sessionLength}
-                           onChange={this.handleSettingsChange}
-                           readOnly={!!this.state.active}
-                           min="1"
-                           max="60" />
-                    <div className="input-group-append">
-                      <button id="session-increment" className="btn btn-outline-secondary" type="button" onClick={this.handleSettingsChange}>+</button>
-                    </div>
-                  </div>
-                </div>
+                <TimerControl
+                  id='break'
+                  value={this.state.breakLength}
+                  onChange={this.handleSettingsChange}
+                  readOnly={!!this.state.active}
+                />
+                <TimerControl
+                  id='session'
+                  value={this.state.sessionLength}
+                  onChange={this.handleSettingsChange}
+                  readOnly={!!this.state.active}
+                />
               </div>
             </div>
             <div className="card-body py-5">
-              <h6 id="timer-label" className="mb-0">Session</h6>
+              <h6 id="timer-label" className="mb-0">{this.state.currentState}</h6>
               <h2 id="time-left"
                   className="display-1 font-weight-bold mb-0">
                 <Countdown
-                  date={Date.now() + (this.state.currentState === 'Session' ? this.state.sessionLength : this.state.breakLength) * 1000 * 60 }
+                  date={Date.now() + this.state.currentSession * 1000 * 60 }
                   autoStart={false}
-                  renderer={props => <div>{props.formatted.minutes}:{props.formatted.seconds}</div>} />
+                  renderer={this.countdown}
+                  ref={this.setClockRef} />
               </h2>
             </div>
             <div className="card-footer text-muted">
@@ -149,6 +139,31 @@ class App extends React.Component {
           </div>
         </main>
         <Footer />
+      </div>
+    );
+  }
+}
+
+class TimerControl extends React.Component {
+  render() {
+    return (
+      <div className="col">
+        <h6 id="break-label" className="d-block text-center mb-2">Break Length</h6>
+        <div className="input-group">
+          <div className="input-group-prepend">
+            <button id={this.props.id + '-decrement'} className="btn btn-outline-secondary" type="button" onClick={this.props.onChange}>-</button>
+          </div>
+          <input id={this.props.id + '-length'}
+                 type="text"
+                 className="form-control text-center"
+                 value={this.props.value}
+                 onChange={this.props.onChange}
+                 readOnly={!!this.props.readOnly}
+          />
+          <div className="input-group-append">
+            <button id={this.props.id + '-increment'} className="btn btn-outline-secondary" type="button" onClick={this.props.onChange}>+</button>
+          </div>
+        </div>
       </div>
     );
   }
