@@ -52,21 +52,10 @@ class App extends React.Component {
     }
   };
 
-  toggleClock = (e) => {
-    const button = e.target;
-    if (this.state.active) {
-      button.textContent = 'Start';
-      button.classList.replace('btn-danger', 'btn-primary');
-      this.setState({
-        active: false
-      });
-    } else {
-      button.textContent = 'Pause';
-      button.classList.replace('btn-primary', 'btn-danger');
-      this.setState({
-        active: true
-      });
-    }
+  toggleClock = () => {
+    this.setState({
+      active: !this.state.active
+    });
   };
 
   reset = () => {
@@ -133,10 +122,20 @@ class App extends React.Component {
             <div className="card-footer text-muted">
               <div className="row">
                 <div className="col">
-                  <button id="start_stop" type="button" className="btn btn-block btn-primary" onClick={this.toggleClock}>Start</button>
+                  <button id="start_stop"
+                          type="button"
+                          className={this.state.active ? 'btn btn-block btn-danger' : 'btn btn-block btn-primary'}
+                          onClick={this.toggleClock}>
+                    {this.state.active ? 'Pause' : 'Start'}
+                  </button>
                 </div>
                 <div className="col">
-                  <button id="reset" type="button" className="btn btn-block btn-secondary" onClick={this.reset}>Reset</button>
+                  <button id="reset"
+                          type="button"
+                          className="btn btn-block btn-secondary"
+                          onClick={this.reset}>
+                    Reset
+                  </button>
                 </div>
               </div>
             </div>
