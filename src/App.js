@@ -78,7 +78,7 @@ class App extends React.Component {
 
   countDown = () => {
     if (this.state.timer === 0) {
-      this.audioBeep.play();
+      this.soundAlert();
     } else if (this.state.timer === -1) {
       if (this.state.cycle === 'Session') {
         this.setState({
@@ -101,7 +101,21 @@ class App extends React.Component {
   }
 
   cycleControl = () => {
-
+    if (this.state.timer === 0) {
+      this.audioBeep.play();
+    } else if (this.state.timer === -1) {
+      if (this.state.cycle === 'Session') {
+        this.setState({
+          cycle: 'Break',
+          timer: this.state.breakLength * 60
+        });
+      } else {
+        this.setState({
+          cycle: 'Session',
+          timer: this.state.sessionLength * 60
+        });
+      }
+    }
   };
 
   setTimer = (timer) => {
@@ -112,9 +126,10 @@ class App extends React.Component {
     return `${minutes}:${seconds}`;
   };
 
-  soundAlert = (timer) => {
-    if (timer === 0) {
-      this.audioBeep.play();
+  soundAlert = () => {
+    const audio = this.audioBeep;
+    if (audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2) {
+      audio.play();
     }
   };
 
